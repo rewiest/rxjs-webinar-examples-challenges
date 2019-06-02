@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { fromEvent } from 'rxjs/index';
-import { scan, startWith } from 'rxjs/operators';
+import { map, scan, startWith } from 'rxjs/operators';
 
 interface Ticker {
   ticker: number;
@@ -45,11 +45,15 @@ export class CounterComponent implements OnInit {
   }
 
   ngOnInit() {
-    // -------------------------------------------------------------------
-    // CHALLENGE: Go Beast Mode By 1!
-    // -------------------------------------------------------------------
-    // Capture the btn click and increment count by 1
-    // -------------------------------------------------------------------
+    fromEvent(this.getNativeElement(this.btn), 'click')
+    .pipe(
+      map(event => 10),
+      startWith({ticker: 0}),
+      scan((accValue: Ticker, eventAmount: number) => ({ticker: accValue.ticker + eventAmount}))
+    )
+    .subscribe((ticker: Ticker) => {
+      this.count = ticker.ticker;
+    });
   }
 
   getNativeElement(element) {
